@@ -49,6 +49,6 @@ class DeleteClient(BasePage):
         return [i for i, x in enumerate(diff_list) if x == min_value]
 
     @allure.step(f"Удалить пользователя с максимальном близким количеством символов в имени")
-    def delete_customer(self, customer_id: int) -> None:
+    def delete_customer(self, customer_id: list[int]) -> None:
         for i in range(len(customer_id) - 1, -1, -1):
             self.click_element(DeleteClientLocators.delete_customer_btn(customer_id[i]))

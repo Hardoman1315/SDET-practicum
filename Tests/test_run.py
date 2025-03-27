@@ -1,5 +1,3 @@
-import time
-
 import allure
 import pytest
 
@@ -30,7 +28,8 @@ class Tests:
         sort_driver.click_customers_btn()
         sort_driver.click_first_name_btn()
         is_sorted = sort_driver.check_names_list()
-        with allure.step("Повторить прошлые 2 шага"):
+        with allure.step("Список отсортирован неверно. Повторение прошлых 2 шагов "
+                         "для обновления сортировки"):
             if not is_sorted:
                 sort_driver.click_first_name_btn()
                 assert sort_driver.check_names_list() == True
@@ -45,5 +44,3 @@ class Tests:
         del_driver.click_customers_btn()
         customer_id = del_driver.find_optimal_customer()
         del_driver.delete_customer(customer_id)
-
-        time.sleep(5)
