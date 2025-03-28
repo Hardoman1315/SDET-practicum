@@ -13,3 +13,11 @@ class DeleteClientLocators:
     @staticmethod
     def delete_customer_btn(customer_id: int):
         return By.XPATH, f'//*[contains(@ng-repeat, "cust in")][{customer_id}]//*[@ng-click="deleteCust(cust)"]'
+
+    @staticmethod
+    def get_customer_code(customer_id: int):
+        return By.XPATH, f'//*[contains(@ng-repeat, "cust in")][{customer_id}]/./*[@class="ng-binding"][3]'
+
+    @staticmethod
+    def get_deleted_customer_locator(code: str):
+        return By.XPATH, f'//*[text()="{code}"]'

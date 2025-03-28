@@ -1,7 +1,7 @@
 from selenium.webdriver.ie.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
-from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
+from selenium.webdriver.support.wait import WebDriverWait
 
 
 class BasePage:
@@ -18,8 +18,8 @@ class BasePage:
             ec.presence_of_element_located(locator)
         )
 
-    def find_elements(self, locator: WebDriver or tuple[str, str]) -> list[WebElement]:
-        return WebDriverWait(self.driver, 60).until(
+    def find_elements(self, locator: WebDriver or tuple[str, str], timeout: int = 60) -> list[WebElement]:
+        return WebDriverWait(self.driver, timeout).until(
             ec.presence_of_all_elements_located(locator)
         )
 
@@ -31,3 +31,6 @@ class BasePage:
 
     def insert_value(self, locator: WebDriver or tuple[str, str], value: str) -> None:
         return self.find_element(locator).send_keys(value)
+
+    def check_presence_of_element(self, locator: WebDriver or tuple[str, str]) -> list[WebDriver]:
+        return self.driver.find_elements(*locator)

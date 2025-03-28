@@ -1,9 +1,10 @@
 import allure
 import pytest
 
-from Pages.AddClient.AddClient import AddClient
-from Pages.DeleteClient.DeleteClient import DeleteClient
-from Pages.SortClients.SortClients import SortClients
+from Helpers.Generator import Generator
+from Pages.Manager.AddClient.AddClient import AddClient
+from Pages.Manager.DeleteClient.DeleteClient import DeleteClient
+from Pages.Manager.SortClients.SortClients import SortClients
 
 
 @allure.suite("Набор тестов")
@@ -14,10 +15,15 @@ class Tests:
         customer_driver = AddClient(driver)
 
         customer_driver.open_target_page()
-        code = customer_driver.generate_post_code()
+        code = Generator.generate_code()
         customer_driver.click_add_customer()
         customer_driver.fill_all_fields(code)
         customer_driver.confirm_adding()
+        customer_driver.close_alert()
+        customer_driver.click_customers_btn()
+        customer_driver.check_new_customer_existence(code)
+        customer_driver.delete_new_customer(code)
+        customer_driver.check_successful_deletion(code)
 
     @allure.title("Сортировать пользователей по имени")
     @pytest.mark.asyncio
@@ -27,15 +33,15 @@ class Tests:
         sort_driver.open_target_page()
         sort_driver.click_customers_btn()
         sort_driver.click_first_name_btn()
-        is_sorted = sort_driver.check_names_list()
-        with allure.step("Список отсортирован неверно. Повторение прошлых 2 шагов "
-                         "для обновления сортировки"):
-            if not is_sorted:
+        try:
+            sort_driver.check_names_list()
+        except AssertionError:
+            with allure.step(f"Неудача. Повторная попытка сортировки"):
                 sort_driver.click_first_name_btn()
-                assert sort_driver.check_names_list() == True
+                sort_driver.check_names_list()
 
-    @allure.title("Удалить пользователя с именем, "
-                  "близким по длине к среднему имён всех клиентов")
+    @allure.title(f"Удалить пользователя с именем, "
+                  f"близким по длине к среднему имён всех клиентов")
     @pytest.mark.asyncio
     async def test_delete_customer(self, driver):
         del_driver = DeleteClient(driver)
@@ -43,4 +49,6 @@ class Tests:
         del_driver.open_target_page()
         del_driver.click_customers_btn()
         customer_id = del_driver.find_optimal_customer()
+        del_codes = del_driver.get_deletion_customer_code(customer_id)
         del_driver.delete_customer(customer_id)
+        del_driver.check_successful_deletion(del_codes)

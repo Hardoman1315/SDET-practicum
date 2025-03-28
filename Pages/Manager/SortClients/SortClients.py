@@ -1,7 +1,7 @@
 import allure
 
 from Helpers.BasePage import BasePage
-from Pages.SortClients.SortClientsLocators import SortClientLocators
+from Pages.Manager.SortClients.SortClientsLocators import SortClientLocators
 from data.lines import customers, first_name
 
 
@@ -34,7 +34,7 @@ class SortClients(BasePage):
         return sorted(names)
 
     @allure.step(f"Сравнить отсортированный список с оригинальным")
-    def check_names_list(self) -> bool:
-        names = self.get_customer_names()
-        sorted_names = self.sort_names()
-        return names == sorted_names
+    def check_names_list(self) -> None:
+        assert self.get_customer_names() == self.sort_names(), (
+            '[FAILED] Список имён не отсортирован в алфавитном порядке'
+        )

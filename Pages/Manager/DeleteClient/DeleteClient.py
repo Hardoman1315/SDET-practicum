@@ -1,8 +1,8 @@
 import allure
 
 from Helpers.BasePage import BasePage
-from Pages.DeleteClient.DeleteClientLocators import DeleteClientLocators
-from data.lines import customers
+from Pages.Manager.DeleteClient.DeleteClientLocators import DeleteClientLocators
+from data.lines import customers, post_code
 
 
 class DeleteClient(BasePage):
@@ -48,7 +48,24 @@ class DeleteClient(BasePage):
         min_value = min(diff_list)
         return [i for i, x in enumerate(diff_list) if x == min_value]
 
+    @allure.step(f"Получить {post_code} удаляемых пользователей")
+    def get_deletion_customer_code(self, customer_id: list[int]):
+        codes_list = [''] * len(customer_id)
+        for i in range(0, len(customer_id), 1):
+            codes_list[i] = self.get_element_text(DeleteClientLocators.get_customer_code(customer_id[i]))
+        return codes_list
+
     @allure.step(f"Удалить пользователя с максимальном близким количеством символов в имени")
     def delete_customer(self, customer_id: list[int]) -> None:
         for i in range(len(customer_id) - 1, -1, -1):
             self.click_element(DeleteClientLocators.delete_customer_btn(customer_id[i]))
+
+    @allure.step(f"Проверить успешное удаление пользователя")
+    def check_successful_deletion(self, customer_codes: list[str]):
+        matches = []
+        for i in range(0, len(customer_codes), 1):
+            matches.extend(self.check_presence_of_element(
+                DeleteClientLocators.get_deleted_customer_locator(customer_codes[i])))
+        assert matches == [], (
+            "[ERROR] Один или несколько пользователей не было удалено"
+        )
