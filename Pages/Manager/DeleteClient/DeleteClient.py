@@ -2,6 +2,7 @@ import allure
 
 from Helpers.BasePage import BasePage
 from Pages.Manager.DeleteClient.DeleteClientLocators import DeleteClientLocators
+from data.lines import customers, post_code
 
 
 class DeleteClient(BasePage):
@@ -12,7 +13,7 @@ class DeleteClient(BasePage):
     def open_target_page(self) -> None:
         self.open_page(DeleteClientLocators.page_url)
 
-    @allure.step("Нажать кнопку '{customers}'")
+    @allure.step(f"Нажать кнопку '{customers}'")
     def click_customers_btn(self) -> None:
         self.click_element(DeleteClientLocators.customers_btn)
 
@@ -47,7 +48,7 @@ class DeleteClient(BasePage):
         min_value = min(diff_list)
         return [i for i, x in enumerate(diff_list) if x == min_value]
 
-    @allure.step("Получить {post_code} удаляемых пользователей")
+    @allure.step(f"Получить {post_code} удаляемых пользователей")
     def get_deletion_customer_code(self, customer_id: list[int]):
         codes_list = [''] * len(customer_id)
         for i in range(0, len(customer_id), 1):

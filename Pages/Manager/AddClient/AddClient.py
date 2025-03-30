@@ -72,7 +72,7 @@ class AddClient(BasePage):
 
     def check_successful_deletion(self, code: str):
         matches = []
-        matches.extend(self.find_elements(
+        matches.extend(self.check_presence_of_element(
             AddClientLocators.get_deleted_customer_locator(code)))
         assert matches == [], (
             "[ERROR] Один или несколько пользователей не было удалено"
