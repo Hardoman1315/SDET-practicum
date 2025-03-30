@@ -14,7 +14,7 @@ class StringManipulator:
         return num
 
     def __internal_extractor(self, code: str, step: int = 2) -> str:
-        extracted_line = f""
+        extracted_line = ""
         for i in range(0, len(code), step):
             char_code = self.check_for_length(int(code[i:i + 2]), 25)
             ucode = (char_code + 97)

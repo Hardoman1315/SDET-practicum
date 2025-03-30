@@ -4,7 +4,7 @@ from selenium.webdriver.common.alert import Alert
 from Helpers.BasePage import BasePage
 from Helpers.StringManipulator import StringManipulator
 from Pages.Manager.AddClient.AddClientLocators import AddClientLocators
-from data.lines import add_customer, post_code, first_name, last_name, customers
+from data.lines import add_customer, customers, first_name, last_name, post_code
 
 
 class AddClient(BasePage):
@@ -13,7 +13,7 @@ class AddClient(BasePage):
 
     str_manipulator = StringManipulator()
 
-    @allure.step(f"Открыть целевую страницу")
+    @allure.step("Открыть целевую страницу")
     def open_target_page(self) -> None:
         self.open_page(AddClientLocators.page_url)
 
@@ -34,7 +34,7 @@ class AddClient(BasePage):
     def insert_last_name(self, code: str) -> None:
         self.insert_value(AddClientLocators.last_name_field, self.str_manipulator.extract_surname_from_code(code))
 
-    @allure.step(f"Заполнить все поля")
+    @allure.step("Заполнить все поля")
     def fill_all_fields(self, code: str) -> None:
         self.insert_first_name(code)
         self.insert_last_name(code)
@@ -44,7 +44,7 @@ class AddClient(BasePage):
     def confirm_adding(self):
         self.click_element(AddClientLocators.confirm_btn)
 
-    @allure.step(f"Закрыть всплывающее уведомление")
+    @allure.step("Закрыть всплывающее уведомление")
     def close_alert(self):
         alert = Alert(self.driver)
         alert.accept()
@@ -53,7 +53,7 @@ class AddClient(BasePage):
     def click_customers_btn(self) -> None:
         self.click_element(AddClientLocators.customers_btn)
 
-    @allure.step(f"Проверить существование нового пользователя")
+    @allure.step("Проверить существование нового пользователя")
     def check_new_customer_existence(self, code: str):
         self.find_element(AddClientLocators.new_customer_name(
             self.str_manipulator.extract_name_from_code(code)))
@@ -63,14 +63,16 @@ class AddClient(BasePage):
 
         self.find_element(AddClientLocators.new_customer_code(code))
 
-    @allure.step(f"Удалить нового пользователя")
+    def clear_test_entities(self, code):
+        self.delete_new_customer(code)
+        self.check_successful_deletion(code)
+
     def delete_new_customer(self, code):
         self.click_element(AddClientLocators.delete_new_customer(code))
 
-    @allure.step(f"Проверить успешное удаление пользователя")
     def check_successful_deletion(self, code: str):
         matches = []
-        matches.extend(self.check_presence_of_element(
+        matches.extend(self.find_elements(
             AddClientLocators.get_deleted_customer_locator(code)))
         assert matches == [], (
             "[ERROR] Один или несколько пользователей не было удалено"

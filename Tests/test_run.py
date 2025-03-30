@@ -1,5 +1,4 @@
 import allure
-import pytest
 
 from Helpers.Generator import Generator
 from Pages.Manager.AddClient.AddClient import AddClient
@@ -10,7 +9,6 @@ from Pages.Manager.SortClients.SortClients import SortClients
 @allure.suite("Набор тестов")
 class Tests:
     @allure.title("Добавить клиента")
-    @pytest.mark.asyncio
     async def test_add_customer(self, driver):
         customer_driver = AddClient(driver)
 
@@ -22,27 +20,19 @@ class Tests:
         customer_driver.close_alert()
         customer_driver.click_customers_btn()
         customer_driver.check_new_customer_existence(code)
-        customer_driver.delete_new_customer(code)
-        customer_driver.check_successful_deletion(code)
+        customer_driver.clear_test_entities(code)
 
     @allure.title("Сортировать пользователей по имени")
-    @pytest.mark.asyncio
     async def test_sort_customers(self, driver):
         sort_driver = SortClients(driver)
 
         sort_driver.open_target_page()
         sort_driver.click_customers_btn()
         sort_driver.click_first_name_btn()
-        try:
-            sort_driver.check_names_list()
-        except AssertionError:
-            with allure.step(f"Неудача. Повторная попытка сортировки"):
-                sort_driver.click_first_name_btn()
-                sort_driver.check_names_list()
+        sort_driver.check_names_list()
 
-    @allure.title(f"Удалить пользователя с именем, "
-                  f"близким по длине к среднему имён всех клиентов")
-    @pytest.mark.asyncio
+    @allure.title("Удалить пользователя с именем, "
+                  "близким по длине к среднему имён всех клиентов")
     async def test_delete_customer(self, driver):
         del_driver = DeleteClient(driver)
 

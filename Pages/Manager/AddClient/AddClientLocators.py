@@ -8,7 +8,7 @@ class AddClientLocators:
     first_name_field = (By.XPATH, '//*[@ng-model="fName"]')
     last_name_field = (By.XPATH, '//*[@ng-model="lName"]')
     confirm_btn = (By.XPATH, '//*[@type="submit"]')
-    customers_btn = (By.XPATH, f'//*[@ng-class="btnClass3"]')
+    customers_btn = (By.XPATH, '//*[@ng-class="btnClass3"]')
 
     @staticmethod
     def new_customer_name(customer_name: str):

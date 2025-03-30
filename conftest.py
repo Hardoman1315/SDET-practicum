@@ -11,7 +11,7 @@ def driver():
     options.add_argument('--enable-javascript')
 
     if os.getenv('CI_ENV') == 'true':
-        options.add_argument("--headless=new")  # Включаем headless-режим только для CI/CD
+        options.add_argument("--headless=new")
         options.add_argument("--disable-gpu")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
