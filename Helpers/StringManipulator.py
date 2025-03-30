@@ -10,10 +10,16 @@ class StringManipulator:
     @staticmethod
     def check_for_length(num: int, limit: int) -> int:
         while num > limit:
-            num = num - limit
+            num = num - (limit + 1)
         return num
 
     def __internal_extractor(self, code: str, step: int = 2) -> str:
+        """
+        This method convert integer code to word
+        :param code: Code to convert
+        :param step: How many digits are supposed to be converted to a letter. Default = 2
+        :return: str
+        """
         extracted_line = ""
         for i in range(0, len(code), step):
             char_code = self.check_for_length(int(code[i:i + 2]), 25)

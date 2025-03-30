@@ -23,6 +23,10 @@ class SortClients(BasePage):
 
     @allure.step("Получить список имён пользователей")
     def get_customer_names(self) -> list[str]:
+        """
+        This method save all users names as a list.
+        :return: list[str]
+        """
         names = []
         for i in range(1, len(self.find_elements(SortClientLocators.customers_list)) + 1):
             names.append(self.get_element_text(SortClientLocators.customer_name(i)))

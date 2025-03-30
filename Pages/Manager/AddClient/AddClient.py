@@ -54,7 +54,12 @@ class AddClient(BasePage):
         self.click_element(AddClientLocators.customers_btn)
 
     @allure.step("Проверить существование нового пользователя")
-    def check_new_customer_existence(self, code: str):
+    def check_new_customer_existence(self, code: str) -> None:
+        """
+        This method search for user with name, surname and post-code, which were used to create him.
+        :param code: Created user post-code
+        :return: None
+        """
         self.find_element(AddClientLocators.new_customer_name(
             self.str_manipulator.extract_name_from_code(code)))
 
@@ -63,14 +68,19 @@ class AddClient(BasePage):
 
         self.find_element(AddClientLocators.new_customer_code(code))
 
-    def clear_test_entities(self, code):
+    def clear_test_entities(self, code: str) -> None:
         self.delete_new_customer(code)
         self.check_successful_deletion(code)
 
-    def delete_new_customer(self, code):
+    def delete_new_customer(self, code: str) -> None:
         self.click_element(AddClientLocators.delete_new_customer(code))
 
-    def check_successful_deletion(self, code: str):
+    def check_successful_deletion(self, code: str) -> None:
+        """
+        Check if there still left user which were supposed to be deleted.
+        :param code: Deleted user post-code
+        :return: None
+        """
         matches = []
         matches.extend(self.check_presence_of_element(
             AddClientLocators.get_deleted_customer_locator(code)))
