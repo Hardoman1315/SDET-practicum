@@ -1,0 +1,5 @@
+api_create = 'api/create/'
+api_get = 'api/get/'
+api_get_all = 'api/getAll/'
+api_patch = 'api/patch/'
+api_delete = 'api/delete/'

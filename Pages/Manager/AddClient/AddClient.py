@@ -56,7 +56,7 @@ class AddClient(BasePage):
     @allure.step("Проверить существование нового пользователя")
     def check_new_customer_existence(self, code: str) -> None:
         """
-        This method search for user with name, surname and post-code, which were used to create him.
+        This method search for user with name, surname and post-code, which were used to api_create him.
         :param code: Created user post-code
         :return: None
         """

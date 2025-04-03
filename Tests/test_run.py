@@ -51,34 +51,53 @@ class TestsUI:
 @allure.suite("Набор API-тестов")
 class TestsAPI:
     @allure.title("Получить данные об объекте по ID")
-    def test_get_data_by_id(self):
+    def test_get_data_by_id(self, entry_id: str = "2", entry_title: str = None):
         get_id = GetAPI()
-        entry = get_id.get_by_id("2")
-        assert entry.title is not None and entry.entry_id == 2, (
-            "[ERROR] Данные не совпадают или не поля не заполнены"
-        )
+        entry = get_id.get_by_id(entry_id)
+        if entry_title:
+            with allure.step("Проверить что имя заполнено"):
+                assert entry.title == entry_title, (
+                    "[ERROR] Поле имени не заполнено"
+                )
+        else:
+            with allure.step("Проверить что имя заполнено"):
+                assert entry.title is not None, (
+                    "[ERROR] Поле имени не заполнено"
+                )
 
-    @allure.step("Получить данные обо всех объектах")
+        with allure.step("Проверить что id запроса и ответа совпадают"):
+            assert entry.entry_id == int(entry_id), (
+                "[ERROR] id запроса и ответа не совпадают"
+            )
+
+    @allure.title("Получить данные обо всех объектах")
     def test_get_all_data(self):
         get_id = GetAPI()
         entries = get_id.get_all()
-        for entry in entries:
-            assert entry.title is not None, (
-                "[ERROR] Данные не совпадают или не поля не заполнены"
-            )
+        with allure.step("Проверить что имя и id заполнены"):
+            for entry in entries:
+                assert entry.title is not None and entry.entry_id is not None, (
+                    "[ERROR] Данные не совпадают или не поля не заполнены"
+                )
 
-    @allure.step("Создать новый объект")
-    def test_create_new_data(self):
+    @allure.title("Создать новый объект")
+    def test_create_new_data(self, entry_title: str = "Watermelon"):
         create_id = PostAPI()
-        return create_id.create_data("Watermelon")
+        response = create_id.create_data(entry_title)
+        self.test_get_data_by_id(response, entry_title)
+        return response
 
-    @allure.step("Удалить объект по id")
+    @allure.title("Удалить объект по id")
     def test_del_data_by_id(self):
         del_id = DelAPI()
         entry_id = self.test_create_new_data()
         del_id.del_by_id(entry_id)
+        with allure.step("Проверить успешное удаление объекта"):
+            assert del_id.del_by_id(entry_id) == 500
 
     @allure.title("Изменить объект по id")
-    def test_edit_data_by_id(self):
+    def test_edit_data_by_id(self, new_entry_title: str = "Pineapple"):
         patch_id = PatchAPI()
-        patch_id.patch_data(self.test_create_new_data(), "Pineapple", True)
+        entry_id = self.test_create_new_data()
+        patch_id.patch_data(entry_id, new_entry_title, True)
+        self.test_get_data_by_id(entry_id, new_entry_title)

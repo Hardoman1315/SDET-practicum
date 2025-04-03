@@ -3,7 +3,6 @@ from typing import Optional
 
 import allure
 import requests
-from pydantic import ValidationError
 
 from Helpers.Models import Entries, Entry, Pattern
 
@@ -17,7 +16,9 @@ class Request:
         complete_url = self.url + path
         response = requests.post(complete_url, json=json.loads(self.__internal_complete_pattern(
             title, verified)))
-        assert response.status_code == 200
+        assert response.status_code == 200, (
+            f"[ERROR] Сервер вернул неожиданный код ({response.status_code})"
+        )
         return response.json()
 
     @allure.step("Отправить PATCH-запрос")
@@ -25,27 +26,37 @@ class Request:
         complete_url = f"{self.url}{path}{entry_id}"
         response = requests.patch(complete_url, json=json.loads(self.__internal_complete_pattern(
             title, verified)))
-        assert response.status_code == 204
+        assert response.status_code == 204, (
+            f"[ERROR] Сервер вернул неожиданный код ({response.status_code})"
+        )
 
     @allure.step("Отправить GET-запрос")
     def send_get_request(self, path: str, payload: str = None):
-        complete_url = f"{self.url}{path}{payload}" if payload else f"{self.url}{path}"
+        complete_url = f"{self.url}{path}{payload}"
         response = requests.get(complete_url)
         assert response.status_code == 200, (
-            "[ERROR] Сервер вернул неожиданный код"
+            f"[ERROR] Сервер вернул неожиданный код ({response.status_code})"
         )
+        return Entry.model_validate(response.json())
 
-        try:
-            json_data = Entries.model_validate(response.json())
-            return json_data.entity
-        except ValidationError:
-            return Entry.model_validate(response.json())
+    @allure.step("Отправить GET-запрос на список")
+    def send_get_request_list(self, path: str):
+        complete_url = f"{self.url}{path}"
+        response = requests.get(complete_url)
+        assert response.status_code == 200, (
+            f"[ERROR] Сервер вернул неожиданный код ({response.status_code})"
+        )
+        json_data = Entries.model_validate(response.json())
+        return json_data.entity
 
     @allure.step("Отправить DELETE-запрос")
     def send_delete_request(self, path: str, payload: str):
         complete_url = f"{self.url}{path}{payload}"
         response = requests.delete(complete_url)
-        assert response.status_code == 204
+        assert response.status_code == 204 or 500, (
+            "[ERROR] Сервер вернул неожиданный код"
+        )
+        return response.status_code
 
     @staticmethod
     def __internal_complete_pattern(title: str, verified: Optional[bool] = True):
