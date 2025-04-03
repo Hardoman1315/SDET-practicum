@@ -66,7 +66,7 @@ class DeleteClient(BasePage):
         return [i for i, x in enumerate(diff_list) if x == min_value]
 
     @allure.step(f"Получить {post_code} удаляемых пользователей")
-    def get_deletion_customer_code(self, customer_id: list[str]):
+    def get_deletion_customer_code(self, customer_id: list[int]):
         """
         This method save post-codes of users for deletion
         :param customer_id: index of users for deletion
