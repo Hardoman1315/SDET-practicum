@@ -34,6 +34,7 @@ class Request:
     def send_get_request(self, path: str, payload: str = None):
         complete_url = f"{self.url}{path}{payload}"
         response = requests.get(complete_url)
+        print(f"complete path: {complete_url}\nresponse code: {response.status_code}")
         assert response.status_code == 200, (
             f"[ERROR] Сервер вернул неожиданный код ({response.status_code})"
         )
