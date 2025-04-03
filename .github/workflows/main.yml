@@ -41,7 +41,7 @@ jobs:
             -   name: Start the container
                 run: |
                     git clone https://github.com/bondarenkokate73/simbirsoft_sdet_project
-                    сd simbirsoft_sdet_project
+                    cd simbirsoft_sdet_project
                     sudo docker-compose up --build -d
 
             -   name: Run the code
