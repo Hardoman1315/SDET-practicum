@@ -22,14 +22,30 @@ jobs:
 
             -   name: Give execute permissions to scripts
                 run: |
-                    chmod +x install_dependencies.sh
-                    chmod +x generate_report.sh
-                    chmod +x show_report.sh 
+                    chmod +x "CLI scripts/Linux/install_dependencies.sh"
+                    chmod +x "CLI scripts/Linux/generate_report.sh"
+                    chmod +x "CLI scripts/Linux/show_report.sh" 
 
             -   name: Install dependencies
-                run: ./install_dependencies.sh
+                run: |
+                    cd "CLI scripts/Linux"
+                    ./install_dependencies.sh
+
+            -   name: Set up docker compose
+                run: |
+                    cd ~
+                    mkdir container
+                    cd container
+                    sudo apt install docker-compose
+
+            -   name: Start the container
+                run: |
+                    git clone https://github.com/bondarenkokate73/simbirsoft_sdet_project
+                    cd simbirsoft_sdet_project
+                    sudo docker-compose up --build -d
 
             -   name: Run the code
                 run: |
-                    source venv/bin/activate
+                    source .venv/bin/activate
+                    cd "CLI scripts/Linux"
                     ./generate_report.sh
