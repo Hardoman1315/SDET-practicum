@@ -81,23 +81,25 @@ class TestsAPI:
                 )
 
     @allure.title("Создать новый объект")
-    def test_create_new_data(self, entry_title: str = "Watermelon"):
+    def test_create_new_data(self, fixture_delete, entry_title: str = "Watermelon"):
         create_id = PostAPI()
         response = create_id.create_data(entry_title)
         self.test_get_data_by_id(response, entry_title)
-        return response
+        fixture_delete.del_by_id(response)
+        fixture_delete.check_del(response)
 
     @allure.title("Удалить объект по id")
-    def test_del_data_by_id(self):
+    def test_del_data_by_id(self, fixture_post):
         del_id = DelAPI()
-        entry_id = self.test_create_new_data()
+        entry_id = fixture_post.create_data("Dragonfruit")
         del_id.del_by_id(entry_id)
         with allure.step("Проверить успешное удаление объекта"):
             assert del_id.del_by_id(entry_id) == 500
 
     @allure.title("Изменить объект по id")
-    def test_edit_data_by_id(self, new_entry_title: str = "Pineapple"):
+    def test_edit_data_by_id(self, fixture_delete, fixture_post, new_entry_title: str = "Pineapple"):
         patch_id = PatchAPI()
-        entry_id = self.test_create_new_data()
+        entry_id = fixture_post.create_data("Dragonfruit")
         patch_id.patch_data(entry_id, new_entry_title, True)
         self.test_get_data_by_id(entry_id, new_entry_title)
+        fixture_delete.del_by_id(entry_id)
